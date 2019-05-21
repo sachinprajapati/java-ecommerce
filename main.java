@@ -37,16 +37,19 @@ class Users{
     Users(){
         user.put("tavarsachin@gmail.com", new HashMap<String, String>());
         user.get("tavarsachin@gmail.com").put("name", "sachin kumar");
-        user.get("tavarsachin@gmail.com").put("password", "pass123");
+        user.get("tavarsachin@gmail.com").put("password", "admin123");
         user.get("tavarsachin@gmail.com").put("address", "kondli delhi");
         user.get("tavarsachin@gmail.com").put("type", "1");
+        user.put("owner@gmail.com", new HashMap<String, String>());
+        user.get("owner@gmail.com").put("name", "owner sachin");
+        user.get("owner@gmail.com").put("password", "admin123");
+        user.get("owner@gmail.com").put("type", "2");
         user.put("admin", new HashMap<String, String>());
         user.get("admin").put("password", "admin123");
         user.get("admin").put("type", "3");
-        //System.out.println(user);
     }
 
-    public void getUser(String username, String pass, Integer type){
+    public boolean getUser(String username, String pass, Integer type){
 		if (user.containsKey(username))  
         { 
             String a = user.get(username).get("password");
@@ -54,15 +57,17 @@ class Users{
             //System.out.println("get Type is "+user.get(username).get(type)+" type of "+" and inserted type "+type);
             if (a.equals(pass) && (Integer.parseInt(user.get(username).get("type")) == type)){
                 System.out.println("Login Succesfully");
+                return true;
             }else{
                 System.out.println("Incorrect password or Incorrect account type");
-				this.Login(type);
+				return false;
             } 
         }else{
             System.out.println("User does not exist");
-			this.Login(type);
+			return false;
         } 
     }
+    
 
     public boolean setUser(String name, String email, String password, String address, Integer type){
         System.out.println(name+" "+email+" "+password+" "+address+"address is "+address);
@@ -75,18 +80,26 @@ class Users{
     }
 
     public void Login(int type){
-        System.out.println("login type is "+type);
-        System.out.println("\n-------------------Login------------------");
-        Scanner readobj = new Scanner(System.in);
-        System.out.print("Enter Username : ");
-        String username = readobj.nextLine();
-        System.out.print("Enter Password : ");
-        String pass = readobj.nextLine();
-        System.out.println("------------------------------------------\n");
+        //System.out.println("login type is "+type);
+        while(true){  
+			System.out.println("\n-------------------Login------------------");
+		    Scanner readobj = new Scanner(System.in);
+		    System.out.print("Enter Username : ");
+		    String username = readobj.nextLine();
+		    System.out.print("Enter Password : ");
+		    String pass = readobj.nextLine();
+		    System.out.println("------------------------------------------\n");
+		    if(this.getUser(username, pass, type)){
+		    	if (type == 3){
+		    		System.out.println("Your admin menu");
+		    	}else{
+		    		Restaurant rst = new Restaurant();
+		    		rst.chooseRestaurant(type);
+		    	}
+		    	break;
+		    }  
+		}
         //System.out.println("username is "+username+" and password is "+pass);
-        this.getUser(username, pass, type);
-        Restaurant rst = new Restaurant();
-        rst.getRestaurant();
     }
 
     public void SignUp(int type){
@@ -109,6 +122,8 @@ class Users{
 
 class Restaurant{
     public static final HashMap<Integer, HashMap<String, String>> rst = new HashMap<Integer, HashMap<String, String>>();
+    public static final HashMap<Integer, HashMap<String, String>> dish = new HashMap<Integer, HashMap<String, String>>();
+    Scanner readobj = new Scanner(System.in);
     Restaurant(){
         rst.put(1, new HashMap<String, String>());
         rst.get(1).put("name", "kesar");
@@ -122,8 +137,42 @@ class Restaurant{
         rst.get(3).put("name", "bikaner");
         rst.get(3).put("address", "gurgaon india");
         rst.get(3).put("contact", "3333234234");
+        dish.put(1, new HashMap<String, String>());
+        dish.get(1).put("name", "chilly potato");
+        dish.get(1).put("price", "50");
+        dish.get(1).put("rst", "1");
+        dish.put(2, new HashMap<String, String>());
+        dish.get(2).put("name", "pizza");
+        dish.get(2).put("price", "60");
+        dish.get(2).put("rst", "2");
+        dish.put(3, new HashMap<String, String>());
+        dish.get(3).put("name", "pasta");
+        dish.get(3).put("price", "40");
+        dish.get(3).put("rst", "3");
     }
-    public void getRestaurant(){
-        System.out.println("getRestaurant "+rst);
+    public void chooseRestaurant(Integer UserType){
+        System.out.println("-------------Please Select Restaurant--------------------");
+        for (Object objectName : rst.keySet()) {
+               System.out.println(objectName+"\tName :- "+rst.get(objectName).get("name"));
+               System.out.println("\tAddress: "+rst.get(objectName).get("Address")+"\n\tContact : "+rst.get(objectName).get("contact")+"\n");
+        }
+        System.out.println("----------------------------------------------------------");
+        String selectedrst = readobj.nextLine();
+        getRestaurantItem(selectedrst);
+    }
+    
+    public void getRestaurantItem(String selectedrst){
+    	System.out.println("\t\tMenu\n-------------Please Select and Item--------------------");
+        for (Object objectName : dish.keySet()) {
+               System.out.println(objectName+"\tName :- "+dish.get(objectName).get("name"));
+               System.out.println("\tPrice: "+dish.get(objectName).get("price")+"\n");
+        }
+        System.out.println("----------------------------------------------------------");
+        String selecteditem = readobj.nextLine();
+        Integer qty = readobj.nextInt();
+    }
+
+    public void getRestaurantByOwner(Integer rid){
+    	System.out.println("items "+dish);
     }
 }
