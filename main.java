@@ -86,15 +86,43 @@ class Users{
         return true;
     }
 
-    public void getUsers(){
-        System.out.println("----------------------------Users--------------------------");
-        System.out.println("\n Name\t\t\tEmail\t\t\t\tAddress\t\t\t\tRole\n");
-        for (Object objectName : user.keySet()) {
-            if(Integer.parseInt(user.get(objectName).get("type")) != 3){
-				System.out.println(user.get(objectName).get("name")+"\t\t"+objectName+"\t\t\t"+user.get(objectName).get("address")+"\t\t\t"+user.get(objectName).get("type"));
-			}
+    public boolean checkUser(String email){
+        //System.out.println("check user "+user.get(email));
+        if(user.get(email) == null){
+            return false;
         }
-        System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t");
+        return true;
+    }
+
+    public void getUsers(){
+		System.out.println("----------------------------Delete Users--------------------------");
+		System.out.println("\n Name\t\t\tEmail\t\t\t\tAddress\t\t\t\tRole\n");
+		String role = "Customer";
+		Integer type;
+		for (Object objectName : user.keySet()) {
+			type = Integer.parseInt(user.get(objectName).get("type"));
+			if(type == 2){
+				role = "Owner";
+			}
+			if(Integer.parseInt(user.get(objectName).get("type")) != 3){
+				System.out.println(user.get(objectName).get("name")+"\t\t"+objectName+"\t\t\t"+user.get(objectName).get("address")+"\t\t\t"+role);
+			}
+		}
+
+        while(true){
+            System.out.print("\nPlease Enter User email for delete : ");
+            Scanner Userop = new Scanner(System.in);
+		    String email = Userop.nextLine();
+            if(checkUser(email)){
+                user.remove(email);
+                System.out.println("Deleted user "+email);
+                break;
+            }else{
+                System.out.println("User Does not exist");
+            }
+        }
+
+
     }
 
     public String getLoggedUser(){
