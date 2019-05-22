@@ -1,4 +1,6 @@
 import java.util.* ;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 class Main{
     
@@ -34,6 +36,7 @@ class Option{
 
 class Users{
     public static final HashMap<String, HashMap<String, String>> user = new HashMap<String, HashMap<String, String>>();
+    public static String LoggedUser;
     Users(){
         user.put("tavarsachin@gmail.com", new HashMap<String, String>());
         user.get("tavarsachin@gmail.com").put("name", "sachin kumar");
@@ -70,12 +73,21 @@ class Users{
     
 
     public boolean setUser(String name, String email, String password, String address, Integer type){
-        System.out.println(name+" "+email+" "+password+" "+address+"address is "+address);
         user.put(email, new HashMap<String, String>());
         user.get(email).put("name", name);
         user.get(email).put("password", password);
         user.get(email).put("address", address);
         user.get(email).put("type", Integer.toString(type));
+        System.out.println(name+" you are succefully registered please login");
+        return true;
+    }
+
+    public String getLoggedUser(){
+        return LoggedUser;
+    }
+
+    public boolean setLoggedUser(String email){
+        LoggedUser = email;
         return true;
     }
 
@@ -90,11 +102,12 @@ class Users{
 		    String pass = readobj.nextLine();
 		    System.out.println("------------------------------------------\n");
 		    if(this.getUser(username, pass, type)){
+                this.setLoggedUser(username);
 		    	if (type == 3){
 		    		System.out.println("Your admin menu");
 		    	}else{
 		    		Restaurant rst = new Restaurant();
-		    		rst.chooseRestaurant(type);
+		    		rst.chooseRestaurant();
 		    	}
 		    	break;
 		    }  
@@ -114,7 +127,6 @@ class Users{
         String add = readobj.nextLine();
         System.out.println("-------------------------------------------------\n");
         this.setUser(name, email, pass, add, type);
-        System.out.println("users is "+this.user);
         Login(type);
     }
 }
@@ -123,7 +135,9 @@ class Users{
 class Restaurant{
     public static final HashMap<Integer, HashMap<String, String>> rst = new HashMap<Integer, HashMap<String, String>>();
     public static final HashMap<Integer, HashMap<String, String>> dish = new HashMap<Integer, HashMap<String, String>>();
+    public static final HashMap<Integer, Integer> cart = new HashMap<Integer, Integer>();
     Scanner readobj = new Scanner(System.in);
+	Users users = new Users();
     Restaurant(){
         rst.put(1, new HashMap<String, String>());
         rst.get(1).put("name", "kesar");
@@ -142,16 +156,20 @@ class Restaurant{
         dish.get(1).put("price", "50");
         dish.get(1).put("rst", "1");
         dish.put(2, new HashMap<String, String>());
-        dish.get(2).put("name", "pizza");
-        dish.get(2).put("price", "60");
-        dish.get(2).put("rst", "2");
+        dish.get(2).put("name", "chhole bhature");
+        dish.get(2).put("price", "20");
+        dish.get(2).put("rst", "1");
         dish.put(3, new HashMap<String, String>());
-        dish.get(3).put("name", "pasta");
-        dish.get(3).put("price", "40");
-        dish.get(3).put("rst", "3");
+        dish.get(3).put("name", "pizza");
+        dish.get(3).put("price", "60");
+        dish.get(3).put("rst", "2");
+        dish.put(4, new HashMap<String, String>());
+        dish.get(4).put("name", "pasta");
+        dish.get(4).put("price", "40");
+        dish.get(4).put("rst", "3");
     }
-    public void chooseRestaurant(Integer UserType){
-        System.out.println("-------------Please Select Restaurant--------------------");
+    public void chooseRestaurant(){
+        System.out.println("\n-------------Please Select Restaurant--------------------");
         for (Object objectName : rst.keySet()) {
                System.out.println(objectName+"\tName :- "+rst.get(objectName).get("name"));
                System.out.println("\tAddress: "+rst.get(objectName).get("Address")+"\n\tContact : "+rst.get(objectName).get("contact")+"\n");
@@ -161,18 +179,82 @@ class Restaurant{
         getRestaurantItem(selectedrst);
     }
     
-    public void getRestaurantItem(String selectedrst){
-    	System.out.println("\t\tMenu\n-------------Please Select and Item--------------------");
+    public void getRestaurantItem(String selectedrst){	
+		Integer UserType = Integer.parseInt(users.user.get(users.getLoggedUser()).get("type"));
+        System.out.println("\t\t\tMenu\n\n-------------Please Select Item Id--------------------");
         for (Object objectName : dish.keySet()) {
-               System.out.println(objectName+"\tName :- "+dish.get(objectName).get("name"));
+            if(selectedrst.equals(dish.get(objectName).get("rst"))){
+               System.out.println("\tId : "+objectName+"\n\tName :- "+dish.get(objectName).get("name"));
                System.out.println("\tPrice: "+dish.get(objectName).get("price")+"\n");
+            }
         }
         System.out.println("----------------------------------------------------------");
-        String selecteditem = readobj.nextLine();
-        Integer qty = readobj.nextInt();
+        Integer selecteditem = readobj.nextInt();
+        if (UserType == 1){
+            System.out.print("\nPlease Enter Quantities : ");
+            Integer qty = readobj.nextInt();
+            setItemToCart(selecteditem, qty, selectedrst);
+        }else if(UserType == 2){
+            System.out.println("Add new item");
+        }
     }
 
     public void getRestaurantByOwner(Integer rid){
     	System.out.println("items "+dish);
+    }
+
+    public void setItemToCart(Integer ItemId, Integer qty, String rstID){
+        cart.put(ItemId, qty);
+        System.out.println("Item aded to your cart");
+        System.out.println("\nPlease Select Option\n1. Add more item\n2. Checkout");
+        Integer cartop = readobj.nextInt();
+        if (cartop == 1){
+            getRestaurantItem(rstID);
+        }else{
+            if(getCheckout()){
+                getInvoice();
+            }
+        }
+    }
+
+    public boolean getCheckout(){
+        System.out.println("----------------------------Welcome to cart--------------------------");
+        System.out.println("\n Item\t\tPrice\t\tQuantity\t\tTotal\n");
+        Integer price, gtotal = 0;
+        for (Object objectName : cart.keySet()) {
+            price = cart.get(objectName)*Integer.parseInt(dish.get(objectName).get("price"));
+            gtotal += price;
+            System.out.println(dish.get(objectName).get("name")+"\t"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t"+price);
+        }
+        System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t"+gtotal);
+        System.out.println("\n-------------Please Enter Any Character to Continue--------------\n");
+        System.out.print("Enter Any Value : ");
+		Scanner input = new Scanner(System.in);
+        String orderop = input.nextLine();
+        if(orderop != null && !orderop.trim().isEmpty()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void getInvoice(){
+        System.out.println("\n\n----------------------------------Invoice---------------------------------");
+        System.out.println("\n Item\t\tPrice\t\tQuantity\t\tTotal\n");
+        Integer price, gtotal = 0;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	    Date date = new Date();
+        for (Object objectName : cart.keySet()) {
+            price = cart.get(objectName)*Integer.parseInt(dish.get(objectName).get("price"));
+            gtotal += price;
+            System.out.println(dish.get(objectName).get("name")+"\t"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t"+price);
+        }
+        System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t"+gtotal);
+        System.out.println("\n-----------------Delivery Detail---------------");
+        System.out.println("Name        \t: \t"+users.user.get(users.getLoggedUser()).get("name"));
+        System.out.println("Email       \t: \t"+users.getLoggedUser());
+        System.out.println("Address     \t: \t"+users.user.get(users.getLoggedUser()).get("address"));
+        System.out.println("Date & Time \t: \t"+dateFormat.format(date));
+        System.out.println("\n-----------------End of Invoice Thanks for purchasing-------------------\n\n");
     }
 }
