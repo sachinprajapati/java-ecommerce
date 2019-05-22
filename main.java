@@ -18,17 +18,21 @@ class Option{
     int ltype;
 
 	Option(int ltype){
-		System.out.println("selected option is "+ltype);
-        Scanner readobj = new Scanner(System.in);
-        System.out.println("Please Select Operation\n1. Login\n2. Register");
-        int op = readobj.nextInt();
         Users users = new Users();
-        if (op == 1){
+        if(ltype == 3){
             users.Login(ltype);
-        }else if(op == 2){
-            users.SignUp(ltype);
         }else{
-            System.out.println("invald option");
+			System.out.println("selected option is "+ltype);
+		    Scanner readobj = new Scanner(System.in);
+		    System.out.println("Please Select Operation\n1. Login\n2. Register");
+		    int op = readobj.nextInt();
+		    if (op == 1){
+		        users.Login(ltype);
+		    }else if(op == 2){
+		        users.SignUp(ltype);
+		    }else{
+		        System.out.println("invald option");
+		    }
         }
     }
 }
@@ -82,6 +86,17 @@ class Users{
         return true;
     }
 
+    public void getUsers(){
+        System.out.println("----------------------------Users--------------------------");
+        System.out.println("\n Name\t\t\tEmail\t\t\t\tAddress\t\t\t\tRole\n");
+        for (Object objectName : user.keySet()) {
+            if(Integer.parseInt(user.get(objectName).get("type")) != 3){
+				System.out.println(user.get(objectName).get("name")+"\t\t"+objectName+"\t\t\t"+user.get(objectName).get("address")+"\t\t\t"+user.get(objectName).get("type"));
+			}
+        }
+        System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t");
+    }
+
     public String getLoggedUser(){
         return LoggedUser;
     }
@@ -104,7 +119,7 @@ class Users{
 		    if(this.getUser(username, pass, type)){
                 this.setLoggedUser(username);
 		    	if (type == 3){
-		    		System.out.println("Your admin menu");
+		    		getUsers();
 		    	}else{
 		    		Restaurant rst = new Restaurant();
 		    		rst.chooseRestaurant();
