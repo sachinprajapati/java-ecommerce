@@ -42,11 +42,11 @@ class Users{
     public static final HashMap<String, HashMap<String, String>> user = new HashMap<String, HashMap<String, String>>();
     private static String LoggedUser;
     Users(){
-        user.put("tavarsachin@gmail.com", new HashMap<String, String>());
-        user.get("tavarsachin@gmail.com").put("name", "sachin kumar");
-        user.get("tavarsachin@gmail.com").put("password", "admin123");
-        user.get("tavarsachin@gmail.com").put("address", "kondli delhi");
-        user.get("tavarsachin@gmail.com").put("type", "1");
+        user.put("sachin@gmail.com", new HashMap<String, String>());
+        user.get("sachin@gmail.com").put("name", "sachin kumar");
+        user.get("sachin@gmail.com").put("password", "admin123");
+        user.get("sachin@gmail.com").put("address", "kondli delhi");
+        user.get("sachin@gmail.com").put("type", "1");
         user.put("owner@gmail.com", new HashMap<String, String>());
         user.get("owner@gmail.com").put("name", "owner sachin");
         user.get("owner@gmail.com").put("password", "admin123");
@@ -160,15 +160,15 @@ class Users{
 
     public void SignUp(int type){
         Scanner readobj = new Scanner(System.in);
-        System.out.println("\n-----------------Welcome to Register page-------------------\nPlease enter name");
+        System.out.print("\n-----------------Welcome to Register page-------------------\nPlease enter name : ");
         String name = readobj.nextLine();
-        System.out.println("Please Enter Email");
+        System.out.print("Please Enter Email : ");
         String email = readobj.nextLine();
-        System.out.println("Please Enter Password");
+        System.out.print("Please Enter Password : ");
         String pass = readobj.nextLine();
-        System.out.println("Please Enter Address");
+        System.out.print("Please Enter Address : ");
         String add = readobj.nextLine();
-        System.out.println("-------------------------------------------------\n");
+        System.out.println("\n-------------------------------------------------\n");
         this.setUser(name, email, pass, add, type);
         Login(type);
     }
