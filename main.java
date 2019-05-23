@@ -40,7 +40,7 @@ class Option{
 
 class Users{
     public static final HashMap<String, HashMap<String, String>> user = new HashMap<String, HashMap<String, String>>();
-    public static String LoggedUser;
+    private static String LoggedUser;
     Users(){
         user.put("tavarsachin@gmail.com", new HashMap<String, String>());
         user.get("tavarsachin@gmail.com").put("name", "sachin kumar");
@@ -232,19 +232,32 @@ class Restaurant{
             }
         }
         System.out.println("----------------------------------------------------------");
-        Integer selecteditem = readobj.nextInt();
         if (UserType == 1){
+            System.out.print("Please Select Item : ");
+            Integer selecteditem = readobj.nextInt();
             System.out.print("\nPlease Enter Quantities : ");
             Integer qty = readobj.nextInt();
             setItemToCart(selecteditem, qty, selectedrst);
         }else if(UserType == 2){
-            System.out.println("Add new item");
+            while(true){
+				System.out.print("\nPlease Enter Item Id for deleting : ");
+				Integer itemId = readobj.nextInt();
+				if(ItemExist(itemId)){
+					System.out.println("item deleted");
+					break;
+				}else{
+					System.out.println("item not exists");
+				}
+			}
         }
     }
 
-    public void getRestaurantByOwner(Integer rid){
-    	System.out.println("items "+dish);
-    }
+    public boolean ItemExist(Integer itemId){
+		if(dish.get(itemId) == null){
+			return false;	
+		}
+		return true;	
+	}
 
     public void setItemToCart(Integer ItemId, Integer qty, String rstID){
         cart.put(ItemId, qty);
