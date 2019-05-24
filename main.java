@@ -283,23 +283,41 @@ class Restaurant{
         String selectedrst = readobj.nextLine();
         getRestaurantItem(selectedrst);
     }
-    
+   
+    public boolean getRstItemExist(String selectedrst, Integer ItemId){
+        boolean itemExist = false;
+        for (Object objectName : dish.keySet()) {
+            if((objectName == ItemId) && (dish.get(objectName).get("rst").equals(selectedrst))){
+                itemExist = true;
+            }
+        }
+        return itemExist;
+
+    }
+
     public void getRestaurantItem(String selectedrst){	
 		Integer UserType = Integer.parseInt(users.user.get(users.getLoggedUser()).get("type"));
         System.out.println("\t\t\tMenu\n\n-------------Please Select Item Id--------------------");
         for (Object objectName : dish.keySet()) {
             if(selectedrst.equals(dish.get(objectName).get("rst"))){
                System.out.println("\tId : "+objectName+"\n\tName :- "+dish.get(objectName).get("name"));
-               System.out.println("\tPrice: "+dish.get(objectName).get("price")+"\n");
+               System.out.println("\tPrice: $"+dish.get(objectName).get("price")+"\n");
             }
         }
         System.out.println("----------------------------------------------------------");
         if (UserType == 1){
-            System.out.print("Please Select Item : ");
-            Integer selecteditem = readobj.nextInt();
-            System.out.print("\nPlease Enter Quantities : ");
-            Integer qty = readobj.nextInt();
-            setItemToCart(selecteditem, qty, selectedrst);
+            while(true){
+                System.out.print("Please Select Item : ");
+                Integer selecteditem = readobj.nextInt();
+                if(getRstItemExist(selectedrst, selecteditem)){
+                    System.out.print("\nPlease Enter Quantities : ");
+                    Integer qty = readobj.nextInt();
+                    setItemToCart(selecteditem, qty, selectedrst);
+                    break;
+                }else{
+                    System.out.println("Item Not Exists");
+                }
+            }
         }else if(UserType == 2){
             while(true){
 				System.out.println("\n1. Add Item\n2. Delete Item\n3. Lgout\n");
@@ -374,9 +392,9 @@ class Restaurant{
         for (Object objectName : cart.keySet()) {
             price = cart.get(objectName)*Integer.parseInt(dish.get(objectName).get("price"));
             gtotal += price;
-            System.out.println(dish.get(objectName).get("name")+"\t"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t"+price);
+            System.out.println(dish.get(objectName).get("name")+"\t$"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t$"+price);
         }
-        System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t"+gtotal);
+        System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t$"+gtotal);
         System.out.println("\n-------------Please Enter Any Character to Continue--------------\n");
         System.out.print("Enter Any Value : ");
 		Scanner input = new Scanner(System.in);
@@ -397,7 +415,7 @@ class Restaurant{
         for (Object objectName : cart.keySet()) {
             price = cart.get(objectName)*Integer.parseInt(dish.get(objectName).get("price"));
             gtotal += price;
-            System.out.println(dish.get(objectName).get("name")+"\t"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t"+price);
+            System.out.println(dish.get(objectName).get("name")+"\t$"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t$"+price);
         }
         System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t"+gtotal);
         System.out.println("\n-----------------Delivery Detail---------------");
