@@ -47,11 +47,11 @@ class Users{
     public static final HashMap<String, HashMap<String, String>> user = new HashMap<String, HashMap<String, String>>();
     private static String LoggedUser;
     Users(){
-        user.put("sachin@gmail.com", new HashMap<String, String>());
-        user.get("sachin@gmail.com").put("name", "sachin kumar");
-        user.get("sachin@gmail.com").put("password", "admin123");
-        user.get("sachin@gmail.com").put("address", "kondli delhi");
-        user.get("sachin@gmail.com").put("type", "1");
+        user.put("tavarsachin@gmail.com", new HashMap<String, String>());
+        user.get("tavarsachin@gmail.com").put("name", "sachin kumar");
+        user.get("tavarsachin@gmail.com").put("password", "admin123");
+        user.get("tavarsachin@gmail.com").put("address", "kondli delhi");
+        user.get("tavarsachin@gmail.com").put("type", "1");
         user.put("kartik@gmail.com", new HashMap<String, String>());
         user.get("kartik@gmail.com").put("name", "Kartik Tomar");
         user.get("kartik@gmail.com").put("password", "kartik123");
@@ -214,8 +214,9 @@ class Users{
 class Restaurant{
     public static final HashMap<Integer, HashMap<String, String>> rst = new HashMap<Integer, HashMap<String, String>>();
     public static final HashMap<Integer, HashMap<String, String>> dish = new HashMap<Integer, HashMap<String, String>>();
+    public static final HashMap<String, HashMap<Integer, Integer>> orders = new HashMap<String, HashMap<Integer, Integer>>();
     public static final HashMap<Integer, Integer> cart = new HashMap<Integer, Integer>();
-    public static Integer itemnumber = 11;
+    public static Integer itemnumber = 13;
     Scanner readobj = new Scanner(System.in);
 	Users users = new Users();
     Restaurant(){
@@ -231,6 +232,10 @@ class Restaurant{
         rst.get(3).put("name", "EC Kitchen");
         rst.get(3).put("address", "1 Sir John Monash Dr, Caulfield East, VIC, 3145");
         rst.get(3).put("owner", "owner@gmail.com");
+		rst.put(4, new HashMap<String, String>());
+        rst.get(4).put("name", "Manosalwa");
+        rst.get(4).put("address", "333A, Clayton Rd, VIC, 3168");
+        rst.get(4).put("owner", "owner@gmail.com");
         dish.put(1, new HashMap<String, String>());
         dish.get(1).put("name", "Chilly Potato");
         dish.get(1).put("price", "10");
@@ -258,35 +263,62 @@ class Restaurant{
         dish.put(7, new HashMap<String, String>());
         dish.get(7).put("name", "Coke");
         dish.get(7).put("price", "3");
-        dish.get(7).put("rst", "2");
+        dish.get(7).put("rst", "3");
         dish.put(8, new HashMap<String, String>());
         dish.get(8).put("name", "Chilly Potato");
         dish.get(8).put("price", "10");
-        dish.get(8).put("rst", "2");
+        dish.get(8).put("rst", "3");
         dish.put(9, new HashMap<String, String>());
         dish.get(9).put("name", "Fried Rice");
         dish.get(9).put("price", "8");
-        dish.get(9).put("rst", "2");
+        dish.get(9).put("rst", "3");
         dish.put(10, new HashMap<String, String>());
         dish.get(10).put("name", "Tofu");
         dish.get(10).put("price", "6");
-        dish.get(10).put("rst", "2");
+        dish.get(10).put("rst", "4");
+		dish.put(11, new HashMap<String, String>());
+        dish.get(11).put("name", "Mixed Platter");
+        dish.get(11).put("price", "20");
+        dish.get(11).put("rst", "4");
+		dish.put(12, new HashMap<String, String>());
+        dish.get(12).put("name", "Naan");
+        dish.get(12).put("price", "4");
+        dish.get(12).put("rst", "4");
     }
     public void chooseRestaurant(){
         System.out.println("\n-------------Please Select Restaurant--------------------");
         for (Object objectName : rst.keySet()) {
                System.out.println(objectName+"\tName :- "+rst.get(objectName).get("name"));
-               System.out.println("\tAddress: "+rst.get(objectName).get("Address")+"\n\tContact : "+rst.get(objectName).get("contact")+"\n");
+               System.out.println("\tAddress: "+rst.get(objectName).get("address")+"\n");
         }
         System.out.println("----------------------------------------------------------");
-        Scanner readobj = new Scanner(System.in);
-        String selectedrst = readobj.nextLine();
-        getRestaurantItem(selectedrst);
+        while(true){
+			System.out.print("Enter Your Choice : ");
+		    Scanner readobj = new Scanner(System.in);
+		    String selectedrst = readobj.nextLine();
+			if(!rstExist(selectedrst)){
+				System.out.println("Invalid Choice");
+				continue;
+			}else{
+		    	getRestaurantItem(selectedrst);
+				break;
+			}
+		}
     }
    
+	public boolean rstExist(String rstId){
+		boolean rstExist = false;
+		for (Object objectName : rst.keySet()) {
+            if(objectName.toString().equals(rstId)){
+                rstExist = true;
+            }
+        }
+		return rstExist;
+	}
+	
     public boolean getRstItemExist(String selectedrst, Integer ItemId){
         boolean itemExist = false;
-        for (Object objectName : dish.keySet()) {
+        for (Object objectName : rst.keySet()) {
             if((objectName == ItemId) && (dish.get(objectName).get("rst").equals(selectedrst))){
                 itemExist = true;
             }
@@ -316,6 +348,8 @@ class Restaurant{
                     break;
                 }else{
                     System.out.println("Item Not Exists");
+					chooseRestaurant();
+					break;
                 }
             }
         }else if(UserType == 2){
@@ -341,14 +375,16 @@ class Restaurant{
 					if(ItemExist(itemId)){
 						dish.remove(itemId);
 						System.out.println("\nitem deleted\n");
-						System.out.println("1. Logout\n2. Select Restaurent");
+						System.out.println("1. Logout\n2. My Orders\n3. Select Restaurent");
 						Scanner finalobj = new Scanner(System.in);
 						Integer cont = finalobj.nextInt();
 						if (cont == 1){
 							users.setLoggedUser(null);
 							Option op = new Option();
 							op.LoginType();
-						}else{
+						}else if(cont == 2){
+                            MyOrders();
+                        }else{
 							chooseRestaurant();
 						}
 		                //break;
@@ -412,20 +448,51 @@ class Restaurant{
         Integer price, gtotal = 0;
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	    Date date = new Date();
+        String DateTimeNow = dateFormat.format(date);
+        orders.put(DateTimeNow, new HashMap<Integer, Integer>());
         for (Object objectName : cart.keySet()) {
             price = cart.get(objectName)*Integer.parseInt(dish.get(objectName).get("price"));
             gtotal += price;
             System.out.println(dish.get(objectName).get("name")+"\t$"+dish.get(objectName).get("price")+"\t\t"+cart.get(objectName)+"\t\t\t$"+price);
+            orders.get(DateTimeNow).put(Integer.parseInt(objectName.toString()), cart.get(objectName));
         }
         System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t"+gtotal);
         System.out.println("\n-----------------Delivery Detail---------------");
         System.out.println("Name        \t: \t"+users.user.get(users.getLoggedUser()).get("name"));
         System.out.println("Email       \t: \t"+users.getLoggedUser());
         System.out.println("Address     \t: \t"+users.user.get(users.getLoggedUser()).get("address"));
-        System.out.println("Date & Time \t: \t"+dateFormat.format(date));
+        System.out.println("Date & Time \t: \t"+DateTimeNow);
         System.out.println("\n-----------------End of Invoice Thanks for purchasing-------------------\n\n");
-        System.out.println("1. Logout\n2. Select Restaurent");
+        cart.clear();
+        System.out.println("1. Logout\n2. My Orders\n3. Select Restaurent");
         Integer cont = readobj.nextInt();
+        if (cont == 1){
+        	users.setLoggedUser(null);
+        	Option op = new Option();
+        	op.LoginType();	
+        }else if(cont == 2){
+            MyOrders();
+        }else{
+            chooseRestaurant();
+        }
+    }
+
+    public void MyOrders(){
+        System.out.println("\n------------------------My Orders-------------------------");
+        for (Object objectName : orders.keySet()) {
+            Integer total = 0,gtotal = 0;
+            System.out.println("\nDate & Time \t:\t "+objectName);
+            System.out.println("Name\t\tPrice\t\tQuantity\t\tTotal");
+			for (Object objectKeyVal : orders.get(objectName).keySet()) {
+                total = Integer.parseInt(dish.get(objectKeyVal).get("price"))*orders.get(objectName).get(objectKeyVal);
+                gtotal += total;
+				System.out.println(dish.get(objectKeyVal).get("name")+"\t"+dish.get(objectKeyVal).get("price")+"\t\t"+orders.get(objectName).get(objectKeyVal)+"\t\t"+total);
+			}
+		    System.out.println("\t\t\t\t\t\t----------------------\n\t\t\t\t\t\t\t"+gtotal+"\n");
+        }
+		System.out.println("1. Logout\n2. Select Restaurent");
+        Scanner readobj = new Scanner(System.in);
+		Integer cont = readobj.nextInt();
         if (cont == 1){
         	users.setLoggedUser(null);
         	Option op = new Option();
@@ -433,5 +500,6 @@ class Restaurant{
         }else{
             chooseRestaurant();
         }
+
     }
 }
