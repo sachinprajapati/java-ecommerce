@@ -318,7 +318,7 @@ class Restaurant{
 	
     public boolean getRstItemExist(String selectedrst, Integer ItemId){
         boolean itemExist = false;
-        for (Object objectName : rst.keySet()) {
+        for (Object objectName : dish.keySet()) {
             if((objectName == ItemId) && (dish.get(objectName).get("rst").equals(selectedrst))){
                 itemExist = true;
             }
